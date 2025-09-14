@@ -6,19 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body { background: #080808; color: #fff; font-family: Arial, sans-serif; margin:0; padding:0; }
+    h1, h3 { color: #FFD700; }
     #hero { padding: 40px 20px; text-align: center; }
     .btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 8px; cursor: pointer; }
     .btn-gold { background: #FFD700; color: #000; }
     .btn-dark { background: #333; color: #fff; }
-    #auth-buttons, #app-nav, #profile, #form-op, #payments { display: none; }
+    .btn-success { background: #25D366; color: #fff; }
+    .btn-info { background: #0088cc; color: #fff; }
+    #auth-buttons, #app-nav, #profile, #form-op, #payments, #history { display: none; }
+    nav { position: fixed; bottom: 0; width: 100%; background: #111; padding: 10px 0; display: flex; justify-content: space-around; }
+    nav a { color: #fff; text-decoration: none; font-size: 1.1em; }
     table { width: 100%; margin-top: 20px; border-collapse: collapse; }
     th, td { border: 1px solid #555; padding: 8px; }
   </style>
 </head>
 <body>
+  <!-- Hero -->
   <div id="hero">
-    <h1>JJXCAPITAL ⚡ Arbitraje P2P</h1>
-    <p>Seguridad, velocidad y control</p>
+    <h1>JJXCAPITAL ⚡</h1>
+    <p>Control de Operaciones de Arbitraje P2P</p>
     <button id="btn-simulador" class="btn btn-dark">Simulador</button>
     <div id="auth-buttons">
       <button id="btn-login" class="btn btn-gold">Iniciar Sesión</button>
@@ -26,13 +32,15 @@
     </div>
   </div>
 
+  <!-- Menú de navegación -->
   <nav id="app-nav">
-    <a href="#" class="btn btn-dark">Dashboard</a>
-    <a href="#" class="btn btn-dark">Historial</a>
-    <a href="#" class="btn btn-dark">Pagos</a>
-    <a href="#" class="btn btn-dark">Perfil</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#historial">Historial</a>
+    <a href="#pagos">Pagos</a>
+    <a href="#perfil">Perfil</a>
   </nav>
 
+  <!-- Perfil -->
   <section id="profile">
     <h3>Mi Perfil</h3>
     <p id="user-name"></p>
@@ -40,6 +48,7 @@
     <button id="btn-logout" class="btn btn-dark">Cerrar Sesión</button>
   </section>
 
+  <!-- Registro de Operaciones -->
   <section id="form-op">
     <h3>Registrar Operación</h3>
     <form id="op-form">
@@ -52,57 +61,51 @@
     </form>
   </section>
 
+  <!-- Historial -->
   <section id="history">
     <h3>Historial</h3>
     <table id="ops-table">
-      <thead><tr><th>Fecha</th><th>Exchange</th><th>Moneda</th><th>Monto</th><th>Ganancia</th></tr></thead>
+      <thead>
+        <tr><th>Fecha</th><th>Exchange</th><th>Moneda</th><th>Monto</th><th>Ganancia</th></tr>
+      </thead>
       <tbody></tbody>
     </table>
   </section>
 
+  <!-- Pagos -->
   <section id="payments">
     <h3>Pagos</h3>
     <div id="paypal-button"></div>
     <p>
       <a href="https://pay.binance.com/en?merchantId=807678814" class="btn btn-gold">Binance Pay</a>
       <a href="https://commerce.blockchain.com/payment-request/create?address=0x4c64b783f1babc0a2fe62f174873f415393c2269&asset=USDTBEP20" class="btn btn-dark">Blockchain Pay</a>
+      <a href="https://wa.me/XXXXXXXX" class="btn btn-success">WhatsApp</a>
+      <a href="https://t.me/XXXXXXXX" class="btn btn-info">Telegram</a>
     </p>
   </section>
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
-    // Configuración de Firebase
-    const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "TU_AUTH_DOMAIN",
-      projectId: "TU_PROJECT_ID",
-      storageBucket: "…",
-      messagingSenderId: "…",
-      appId: "…"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    // Estado de sesión simulado (puedes reemplazar luego con Firebase)
+    let isLoggedIn = false;
+    const authButtons = document.getElementById('auth-buttons');
+    const appNav = document.getElementById('app-nav');
+    const profile = document.getElementById('profile');
+    const formOp = document.getElementById('form-op');
+    const payments = document.getElementById('payments');
+    const history = document.getElementById('history');
+    const userName = document.getElementById('user-name');
+    const userEmail = document.getElementById('user-email');
 
-    // Función que revisa estado de sesión
-    auth.onAuthStateChanged(user => {
-      const authButtons = document.getElementById('auth-buttons');
-      const appNav = document.getElementById('app-nav');
-      const profile = document.getElementById('profile');
-      const formOp = document.getElementById('form-op');
-      const payments = document.getElementById('payments');
-      const history = document.getElementById('history');
-      if (user) {
+    function updateUI() {
+      if (isLoggedIn) {
         authButtons.style.display = 'none';
-        appNav.style.display = 'block';
+        appNav.style.display = 'flex';
         profile.style.display = 'block';
         formOp.style.display = 'block';
         history.style.display = 'block';
         payments.style.display = 'block';
-        document.getElementById('user-name').innerText = "Usuario: " + user.displayName;
-        document.getElementById('user-email').innerText = "Email: " + user.email;
+        userName.innerText = "Usuario: Jeremi Soto";
+        userEmail.innerText = "Email: ejemplo@correo.com";
       } else {
         authButtons.style.display = 'block';
         appNav.style.display = 'none';
@@ -111,9 +114,19 @@
         history.style.display = 'none';
         payments.style.display = 'none';
       }
+    }
+
+    document.getElementById('btn-login').addEventListener('click', () => {
+      isLoggedIn = true; updateUI();
+    });
+    document.getElementById('btn-register').addEventListener('click', () => {
+      isLoggedIn = true; updateUI();
+    });
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      isLoggedIn = false; updateUI();
     });
 
-    // Agregar operación al historial local
+    // Formulario de operaciones
     document.getElementById('op-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const date = document.getElementById('op-date').value;
@@ -125,12 +138,10 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `<td>${date}</td><td>${exchange}</td><td>${coin}</td><td>${amount}</td><td>${profit}</td>`;
       tbody.prepend(tr);
-      // Limpiar formulario
       e.target.reset();
     });
 
-    // Aquí pondrías PayPal SDK y demás si tienes cliente
-    // ...
+    updateUI(); // Inicializar
   </script>
 </body>
 </html>
