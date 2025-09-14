@@ -2,57 +2,135 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JJXCAPITAL ⚡</title>
+  <title>JJXCAPITAL ⚡ Control de Arbitraje P2P</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #1D2671, #C33764);
-      color: white;
-      text-align: center;
-      line-height: 1.5;
-    }
-    header {
-      padding: 2rem 0;
-    }
-    section {
-      padding: 2rem;
-    }
-    h1, h2 {
-      font-weight: 600;
-    }
-    h2 {
-      margin-top: 1.5rem;
-    }
-    p {
-      margin-top: 0.75rem;
-    }
+    body { background: #080808; color: #fff; font-family: Arial, sans-serif; margin:0; padding:0; }
+    #hero { padding: 40px 20px; text-align: center; }
+    .btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 8px; cursor: pointer; }
+    .btn-gold { background: #FFD700; color: #000; }
+    .btn-dark { background: #333; color: #fff; }
+    #auth-buttons, #app-nav, #profile, #form-op, #payments { display: none; }
+    table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+    th, td { border: 1px solid #555; padding: 8px; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>JJXCAPITAL ⚡</h1>
-    <p>Seguridad, velocidad y confianza</p>
-  </header>
+  <div id="hero">
+    <h1>JJXCAPITAL ⚡ Arbitraje P2P</h1>
+    <p>Seguridad, velocidad y control</p>
+    <button id="btn-simulador" class="btn btn-dark">Simulador</button>
+    <div id="auth-buttons">
+      <button id="btn-login" class="btn btn-gold">Iniciar Sesión</button>
+      <button id="btn-register" class="btn btn-gold">Registrarse</button>
+    </div>
+  </div>
 
-  <section>
-    <h2>Seguridad</h2>
-    <p>Autenticación multifactor y encriptación de última generación para proteger tus activos.</p>
+  <nav id="app-nav">
+    <a href="#" class="btn btn-dark">Dashboard</a>
+    <a href="#" class="btn btn-dark">Historial</a>
+    <a href="#" class="btn btn-dark">Pagos</a>
+    <a href="#" class="btn btn-dark">Perfil</a>
+  </nav>
+
+  <section id="profile">
+    <h3>Mi Perfil</h3>
+    <p id="user-name"></p>
+    <p id="user-email"></p>
+    <button id="btn-logout" class="btn btn-dark">Cerrar Sesión</button>
   </section>
 
-  <section>
-    <h2>Velocidad</h2>
-    <p>Operaciones instantáneas y simuladores en tiempo real para aprovechar cada oportunidad.</p>
+  <section id="form-op">
+    <h3>Registrar Operación</h3>
+    <form id="op-form">
+      <input type="date" id="op-date" required><br>
+      <input type="text" id="op-exchange" placeholder="Exchange" required><br>
+      <input type="text" id="op-coin" placeholder="Moneda" required><br>
+      <input type="number" id="op-amount" placeholder="Monto" required><br>
+      <input type="number" id="op-profit" placeholder="Ganancia" required><br>
+      <button type="submit" class="btn btn-gold">Agregar Operación</button>
+    </form>
   </section>
 
-  <section>
-    <h2>Confianza</h2>
-    <p>Transparencia total y herramientas profesionales de trading para que tomes decisiones informadas.</p>
+  <section id="history">
+    <h3>Historial</h3>
+    <table id="ops-table">
+      <thead><tr><th>Fecha</th><th>Exchange</th><th>Moneda</th><th>Monto</th><th>Ganancia</th></tr></thead>
+      <tbody></tbody>
+    </table>
   </section>
+
+  <section id="payments">
+    <h3>Pagos</h3>
+    <div id="paypal-button"></div>
+    <p>
+      <a href="https://pay.binance.com/en?merchantId=807678814" class="btn btn-gold">Binance Pay</a>
+      <a href="https://commerce.blockchain.com/payment-request/create?address=0x4c64b783f1babc0a2fe62f174873f415393c2269&asset=USDTBEP20" class="btn btn-dark">Blockchain Pay</a>
+    </p>
+  </section>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_AUTH_DOMAIN",
+      projectId: "TU_PROJECT_ID",
+      storageBucket: "…",
+      messagingSenderId: "…",
+      appId: "…"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Función que revisa estado de sesión
+    auth.onAuthStateChanged(user => {
+      const authButtons = document.getElementById('auth-buttons');
+      const appNav = document.getElementById('app-nav');
+      const profile = document.getElementById('profile');
+      const formOp = document.getElementById('form-op');
+      const payments = document.getElementById('payments');
+      const history = document.getElementById('history');
+      if (user) {
+        authButtons.style.display = 'none';
+        appNav.style.display = 'block';
+        profile.style.display = 'block';
+        formOp.style.display = 'block';
+        history.style.display = 'block';
+        payments.style.display = 'block';
+        document.getElementById('user-name').innerText = "Usuario: " + user.displayName;
+        document.getElementById('user-email').innerText = "Email: " + user.email;
+      } else {
+        authButtons.style.display = 'block';
+        appNav.style.display = 'none';
+        profile.style.display = 'none';
+        formOp.style.display = 'none';
+        history.style.display = 'none';
+        payments.style.display = 'none';
+      }
+    });
+
+    // Agregar operación al historial local
+    document.getElementById('op-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const date = document.getElementById('op-date').value;
+      const exchange = document.getElementById('op-exchange').value;
+      const coin = document.getElementById('op-coin').value;
+      const amount = document.getElementById('op-amount').value;
+      const profit = document.getElementById('op-profit').value;
+      const tbody = document.querySelector('#ops-table tbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${date}</td><td>${exchange}</td><td>${coin}</td><td>${amount}</td><td>${profit}</td>`;
+      tbody.prepend(tr);
+      // Limpiar formulario
+      e.target.reset();
+    });
+
+    // Aquí pondrías PayPal SDK y demás si tienes cliente
+    // ...
+  </script>
 </body>
 </html>
