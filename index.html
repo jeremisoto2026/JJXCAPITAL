@@ -3,98 +3,115 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JJXCAPITAL ⚡ - Dashboard</title>
+  <title>JJXCAPITAL ⚡ - Professional Crypto Platform</title>
   <style>
-    body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; text-align:center; }
-    header { background:#FFD700; color:#000; padding:15px; font-size:1.4rem; font-weight:bold; }
-    section { max-width:700px; margin:20px auto; padding:20px; border-radius:10px; }
-    #auth-ui { background:#222; }
-    #dashboard { background:#1a1a1a; display:none; }
-    input, button { padding:10px; margin:5px; border-radius:5px; border:none; }
-    button { cursor:pointer; font-weight:bold; }
-    #btn-login, #btn-logout { background:#FFD700; color:#000; }
-    #btn-save-op { background:#4CAF50; color:#fff; }
-    ul { text-align:left; margin-top:15px; }
-    li { padding:5px; border-bottom:1px solid #333; }
+    /* ===== Tu diseño original (NO modificado) ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+           background: linear-gradient(135deg, #0D0D0D 0%, #1a1a1a 100%);
+           color: #fff; text-align: center; min-height: 100vh; }
+    #hero { padding: 60px 20px; background: linear-gradient(135deg, #0D0D0D 0%, #1a1a1a 50%, #2d2d2d 100%);
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .logo { font-size: 3.5rem; font-weight: 800; color: #FFD700; text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 20px; animation: glow 2s ease-in-out infinite alternate; }
+    @keyframes glow { from { text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
+                      to { text-shadow: 0 0 50px rgba(255, 215, 0, 0.8); } }
+    .tagline { font-size: 1.2rem; color: #CCCCCC; margin-bottom: 40px; font-weight: 300; }
+    #hero button { margin: 15px 10px; padding: 15px 30px; border: none; border-radius: 25px;
+                   font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+                   text-transform: uppercase; letter-spacing: 1px; }
+    #btn-simulador { background: linear-gradient(135deg, #333 0%, #555 100%); color: #fff; border: 2px solid #FFD700; }
+    #btn-simulador:hover { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4); }
+    #btn-login, #btn-register { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000;
+                                box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
+    #btn-login:hover, #btn-register:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4); }
+    #app-nav { display: none; position: fixed; bottom: 0; width: 100%; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+               padding: 15px 0; border-top: 2px solid #333; box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5); z-index: 1000; }
+    #app-nav.show { display: flex; justify-content: space-around; }
+    #app-nav a { color: #CCCCCC; font-size: 1.8rem; text-decoration: none; transition: all 0.3s ease; padding: 10px; border-radius: 10px;
+                 display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    #app-nav a:hover { color: #FFD700; background: rgba(255, 215, 0, 0.1); transform: translateY(-3px); }
+    .nav-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    #profile { display: none; background: linear-gradient(135deg, #1a4d1a 0%, #2d2d2d 100%); padding: 30px; margin: 20px; border-radius: 15px;
+               border: 2px solid #4CAF50; text-align: left; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
+    #profile.show { display: block; }
+    #payments { display: none; padding: 30px; background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%); margin: 20px; border-radius: 15px;
+                border: 2px solid #FFD700; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
+    #payments.show { display: block; }
+    .payment-methods { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
+    #paypal-button-container { margin: 25px 0; max-width: 400px; margin-left: auto; margin-right: auto; }
+    .btn-warning { background: linear-gradient(135deg, #f0b90b 0%, #d4ac0d 100%); color: #000; }
+    .btn-dark { background: linear-gradient(135deg, #333 0%, #555 100%); }
+    .btn-success { background: linear-gradient(135deg, #25D366 0%, #1ea952 100%); }
+    .btn-info { background: linear-gradient(135deg, #0088cc 0%, #006bb3 100%); }
+    ul#ops-list { margin-top: 20px; list-style: none; padding: 0; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto; }
+    ul#ops-list li { padding: 5px 10px; border-bottom: 1px solid #333; }
   </style>
 </head>
 <body>
-  <header>JJXCAPITAL ⚡ Dashboard</header>
-
-  <!-- Pantalla de login -->
-  <section id="auth-ui">
-    <h2>Iniciar sesión</h2>
-    <button id="btn-login">🚀 Login con Auth0</button>
+  <!-- HERO -->
+  <section id="hero">
+    <div class="logo">JJXCAPITAL ⚡</div>
+    <p class="tagline">Seguridad, velocidad y confianza</p>
+    <button id="btn-simulador">🔄 Ir al Simulador</button>
+    <div id="auth-buttons">
+      <button id="btn-login">🚀 Iniciar Sesión</button>
+      <button id="btn-register">📝 Regístrate Gratis</button>
+    </div>
   </section>
 
-  <!-- Dashboard tras login -->
-  <section id="dashboard">
-    <h2>👤 Bienvenido <span id="user-email"></span></h2>
-    <button id="btn-logout">🚪 Cerrar Sesión</button>
+  <!-- PROFILE -->
+  <section id="profile">
+    <h2>👤 Mi Perfil</h2>
+    <p>Nombre: <span id="profile-name">—</span></p>
+    <p>Email: <span id="profile-email">—</span></p>
+  </section>
 
-    <h3>Nueva operación</h3>
-    <input id="base" placeholder="Base (ej. BTC)" />
-    <input id="quote" placeholder="Quote (ej. USDT)" />
+  <!-- PAYMENTS -->
+  <section id="payments">
+    <h2>💎 Plan PREMIUM - $15 USD/mes</h2>
+    <div class="payment-methods">
+      <div class="payment-method">
+        <h4>💳 PayPal</h4>
+        <div id="paypal-button-container"></div>
+      </div>
+      <div class="payment-method">
+        <h4>⚡ Binance Pay</h4>
+        <a href="https://pay.binance.com/en?merchantId=807678814" target="_blank" class="btn btn-warning">BINANCE PAY</a>
+      </div>
+      <div class="payment-method">
+        <h4>🔗 Blockchain Pay</h4>
+        <a href="https://commerce.blockchain.com/payment-request/create?address=0x4c64b783f1babc0a2fe62f174873f415393c2269&asset=USDTBEP20" target="_blank" class="btn btn-dark">BLOCKCHAIN PAY</a>
+        <p style="font-size:0.8rem;color:#888;">USDT BEP20</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD (aquí agrego operaciones) -->
+  <section id="dashboard" style="display:none; padding:20px;">
+    <h2>📊 Mis Operaciones</h2>
+    <input id="base" placeholder="Base (BTC, ETH...)" />
+    <input id="quote" placeholder="Quote (USDT...)" />
     <input id="price-buy" type="number" step="0.01" placeholder="Precio Compra" />
     <input id="price-sell" type="number" step="0.01" placeholder="Precio Venta" />
-    <button id="btn-save-op">💾 Guardar Operación</button>
-
-    <h3>📜 Mis Operaciones</h3>
+    <button id="btn-save-op">💾 Guardar</button>
     <ul id="ops-list"></ul>
   </section>
 
-  <!-- Auth0 SDK -->
-  <script src="https://cdn.auth0.com/js/auth0-spa-js/1.23/auth0-spa-js.production.js"></script>
+  <!-- NAVIGATION -->
+  <nav id="app-nav">
+    <a href="#dashboard"><span>🏠</span><span class="nav-label">Dashboard</span></a>
+    <a href="#arbitraje"><span>⚡</span><span class="nav-label">Arbitraje</span></a>
+    <a href="#historial"><span>📜</span><span class="nav-label">Historial</span></a>
+    <a href="#p2p"><span>🤝</span><span class="nav-label">P2P</span></a>
+    <a href="#premium"><span>💎</span><span class="nav-label">Premium</span></a>
+  </nav>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
-
   <script>
-    // =======================
-    // 🔑 Configuración Auth0
-    // =======================
-    let auth0Client = null;
-    async function initAuth0() {
-      auth0Client = await createAuth0Client({
-        domain: "dev-o55rso550zqg13er.us.auth0.com",
-        client_id: "B0Il73OK2psAqNiLZQPemVsJgk9AeCHA",
-        cacheLocation: "localstorage"
-      });
-
-      if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
-        await auth0Client.handleRedirectCallback();
-        window.history.replaceState({}, document.title, "/");
-      }
-
-      updateUI();
-    }
-
-    async function updateUI() {
-      const user = await auth0Client.getUser();
-      if (user) {
-        document.getElementById("auth-ui").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
-        document.getElementById("user-email").textContent = user.email;
-        loadOperations(user.sub);
-        document.getElementById("btn-save-op").onclick = () => saveOperation(user.sub);
-      } else {
-        document.getElementById("auth-ui").style.display = "block";
-        document.getElementById("dashboard").style.display = "none";
-      }
-    }
-
-    document.getElementById("btn-login").onclick = async () => {
-      await auth0Client.loginWithRedirect({ redirect_uri: window.location.origin });
-    };
-
-    document.getElementById("btn-logout").onclick = () => {
-      auth0Client.logout({ returnTo: window.location.origin });
-    };
-
-    // =======================
     // 🔥 Configuración Firebase
-    // =======================
     const firebaseConfig = {
       apiKey: "AIzaSyBMHC2YuUO3mwHQORDDGZaQ84-k4tmJGjY",
       authDomain: "jjxcapital-2.firebaseapp.com",
@@ -104,55 +121,36 @@
       appId: "1:842768954334:web:63248c0a432f583abf234f",
       measurementId: "G-VVYKFN4WPD"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // =======================
-    // 💾 Firestore funciones
-    // =======================
-    async function saveOperation(userId) {
-      const base = document.getElementById("base").value;
-      const quote = document.getElementById("quote").value;
-      const priceBuy = parseFloat(document.getElementById("price-buy").value);
+    // 💾 Guardar operación
+    async function saveOperation(userId="demo-user") {
+      const base      = document.getElementById("base").value;
+      const quote     = document.getElementById("quote").value;
+      const priceBuy  = parseFloat(document.getElementById("price-buy").value);
       const priceSell = parseFloat(document.getElementById("price-sell").value);
-      const profit = priceSell - priceBuy;
-
+      const profit    = priceSell - priceBuy;
       try {
         await db.collection("operations").add({
-          uid: userId,
-          base,
-          quote,
-          priceBuy,
-          priceSell,
-          profit,
+          uid: userId, base, quote, priceBuy, priceSell, profit,
           ts: firebase.firestore.FieldValue.serverTimestamp()
         });
         loadOperations(userId);
-      } catch (e) {
-        alert("Error guardando operación: " + e.message);
-      }
+      } catch (e) { alert("❌ Error guardando operación: " + e.message); }
     }
 
-    async function loadOperations(userId) {
+    // 📥 Cargar operaciones
+    async function loadOperations(userId="demo-user") {
       try {
-        const snap = await db.collection("operations")
-          .where("uid", "==", userId)
-          .orderBy("ts", "desc")
-          .get();
-
+        const snap = await db.collection("operations").where("uid","==",userId).orderBy("ts","desc").get();
         document.getElementById("ops-list").innerHTML =
-          snap.docs.map(doc => {
-            const o = doc.data();
-            return `<li>${o.base}/${o.quote} → Profit: ${o.profit}</li>`;
-          }).join("");
-      } catch (e) {
-        alert("Error cargando operaciones: " + e.message);
-      }
+          snap.docs.map(doc => { const o=doc.data(); return `<li>${o.base}/${o.quote} → Profit: ${o.profit}</li>`; }).join("");
+      } catch (e) { alert("❌ Error cargando operaciones: " + e.message); }
     }
 
-    // Inicializar Auth0
-    window.onload = initAuth0;
+    // Vincular botón
+    document.getElementById("btn-save-op").onclick = () => saveOperation("demo-user");
   </script>
 </body>
 </html>
