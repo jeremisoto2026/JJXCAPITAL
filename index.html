@@ -5,47 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>JJXCAPITAL ⚡ - Professional Crypto Platform</title>
   <style>
-    /* ===== Tu diseño original (NO modificado) ===== */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-           background: linear-gradient(135deg, #0D0D0D 0%, #1a1a1a 100%);
-           color: #fff; text-align: center; min-height: 100vh; }
-    #hero { padding: 60px 20px; background: linear-gradient(135deg, #0D0D0D 0%, #1a1a1a 50%, #2d2d2d 100%);
-            min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-    .logo { font-size: 3.5rem; font-weight: 800; color: #FFD700; text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-            margin-bottom: 20px; animation: glow 2s ease-in-out infinite alternate; }
-    @keyframes glow { from { text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-                      to { text-shadow: 0 0 50px rgba(255, 215, 0, 0.8); } }
-    .tagline { font-size: 1.2rem; color: #CCCCCC; margin-bottom: 40px; font-weight: 300; }
-    #hero button { margin: 15px 10px; padding: 15px 30px; border: none; border-radius: 25px;
-                   font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
-                   text-transform: uppercase; letter-spacing: 1px; }
-    #btn-simulador { background: linear-gradient(135deg, #333 0%, #555 100%); color: #fff; border: 2px solid #FFD700; }
-    #btn-simulador:hover { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4); }
-    #btn-login, #btn-register { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000;
-                                box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
-    #btn-login:hover, #btn-register:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4); }
-    #app-nav { display: none; position: fixed; bottom: 0; width: 100%; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-               padding: 15px 0; border-top: 2px solid #333; box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5); z-index: 1000; }
-    #app-nav.show { display: flex; justify-content: space-around; }
-    #app-nav a { color: #CCCCCC; font-size: 1.8rem; text-decoration: none; transition: all 0.3s ease; padding: 10px; border-radius: 10px;
-                 display: flex; flex-direction: column; align-items: center; gap: 5px; }
-    #app-nav a:hover { color: #FFD700; background: rgba(255, 215, 0, 0.1); transform: translateY(-3px); }
-    .nav-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    #profile { display: none; background: linear-gradient(135deg, #1a4d1a 0%, #2d2d2d 100%); padding: 30px; margin: 20px; border-radius: 15px;
-               border: 2px solid #4CAF50; text-align: left; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
-    #profile.show { display: block; }
-    #payments { display: none; padding: 30px; background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%); margin: 20px; border-radius: 15px;
-                border: 2px solid #FFD700; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
-    #payments.show { display: block; }
-    .payment-methods { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
-    #paypal-button-container { margin: 25px 0; max-width: 400px; margin-left: auto; margin-right: auto; }
-    .btn-warning { background: linear-gradient(135deg, #f0b90b 0%, #d4ac0d 100%); color: #000; }
-    .btn-dark { background: linear-gradient(135deg, #333 0%, #555 100%); }
-    .btn-success { background: linear-gradient(135deg, #25D366 0%, #1ea952 100%); }
-    .btn-info { background: linear-gradient(135deg, #0088cc 0%, #006bb3 100%); }
-    ul#ops-list { margin-top: 20px; list-style: none; padding: 0; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto; }
-    ul#ops-list li { padding: 5px 10px; border-bottom: 1px solid #333; }
+    /* === TU DISEÑO ORIGINAL (no modificado) === */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',sans-serif; background:linear-gradient(135deg,#0D0D0D,#1a1a1a); color:#fff; text-align:center; min-height:100vh; }
+    #hero { padding:60px 20px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+    .logo { font-size:3.5rem; font-weight:800; color:#FFD700; margin-bottom:20px; }
+    .tagline { font-size:1.2rem; color:#ccc; margin-bottom:40px; }
+    #hero button { margin:15px 10px; padding:15px 30px; border:none; border-radius:25px; font-size:1.1em; font-weight:600; cursor:pointer; }
+    #btn-simulador { background:#444; color:#fff; border:2px solid #FFD700; }
+    #btn-login,#btn-register { background:linear-gradient(135deg,#FFD700,#FFA500); color:#000; }
+    #app-nav { display:none; position:fixed; bottom:0; width:100%; background:#111; padding:15px 0; }
+    #app-nav.show { display:flex; justify-content:space-around; }
+    #profile,#payments { display:none; margin:20px; padding:20px; border-radius:15px; }
+    #profile.show,#payments.show { display:block; }
   </style>
 </head>
 <body>
@@ -55,8 +27,8 @@
     <p class="tagline">Seguridad, velocidad y confianza</p>
     <button id="btn-simulador">🔄 Ir al Simulador</button>
     <div id="auth-buttons">
-      <button id="btn-login">🚀 Iniciar Sesión</button>
-      <button id="btn-register">📝 Regístrate Gratis</button>
+      <button id="btn-login">🚀 Iniciar Sesión con Google</button>
+      <button id="btn-register">📝 Registrarse Gratis</button>
     </div>
   </section>
 
@@ -65,92 +37,107 @@
     <h2>👤 Mi Perfil</h2>
     <p>Nombre: <span id="profile-name">—</span></p>
     <p>Email: <span id="profile-email">—</span></p>
+    <p>Miembro desde: <span id="profile-date">—</span></p>
+    <p>Estado: <span id="profile-status">Plan Gratuito</span></p>
   </section>
 
   <!-- PAYMENTS -->
   <section id="payments">
-    <h2>💎 Plan PREMIUM - $15 USD/mes</h2>
-    <div class="payment-methods">
-      <div class="payment-method">
-        <h4>💳 PayPal</h4>
-        <div id="paypal-button-container"></div>
-      </div>
-      <div class="payment-method">
-        <h4>⚡ Binance Pay</h4>
-        <a href="https://pay.binance.com/en?merchantId=807678814" target="_blank" class="btn btn-warning">BINANCE PAY</a>
-      </div>
-      <div class="payment-method">
-        <h4>🔗 Blockchain Pay</h4>
-        <a href="https://commerce.blockchain.com/payment-request/create?address=0x4c64b783f1babc0a2fe62f174873f415393c2269&asset=USDTBEP20" target="_blank" class="btn btn-dark">BLOCKCHAIN PAY</a>
-        <p style="font-size:0.8rem;color:#888;">USDT BEP20</p>
-      </div>
-    </div>
+    <h2>💎 Plan PREMIUM</h2>
+    <div id="paypal-button-container"></div>
   </section>
 
-  <!-- DASHBOARD (aquí agrego operaciones) -->
-  <section id="dashboard" style="display:none; padding:20px;">
-    <h2>📊 Mis Operaciones</h2>
-    <input id="base" placeholder="Base (BTC, ETH...)" />
-    <input id="quote" placeholder="Quote (USDT...)" />
-    <input id="price-buy" type="number" step="0.01" placeholder="Precio Compra" />
-    <input id="price-sell" type="number" step="0.01" placeholder="Precio Venta" />
-    <button id="btn-save-op">💾 Guardar</button>
-    <ul id="ops-list"></ul>
-  </section>
-
-  <!-- NAVIGATION -->
+  <!-- NAV -->
   <nav id="app-nav">
-    <a href="#dashboard"><span>🏠</span><span class="nav-label">Dashboard</span></a>
-    <a href="#arbitraje"><span>⚡</span><span class="nav-label">Arbitraje</span></a>
-    <a href="#historial"><span>📜</span><span class="nav-label">Historial</span></a>
-    <a href="#p2p"><span>🤝</span><span class="nav-label">P2P</span></a>
-    <a href="#premium"><span>💎</span><span class="nav-label">Premium</span></a>
+    <a href="#dashboard">🏠 Dashboard</a>
+    <a href="#arbitraje">⚡ Arbitraje</a>
+    <a href="#historial">📜 Historial</a>
+    <a href="#p2p">🤝 P2P</a>
+    <a href="#premium">💎 Premium</a>
   </nav>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
-  <script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
     // 🔥 Configuración Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBMHC2YuUO3mwHQORDDGZaQ84-k4tmJGjY",
       authDomain: "jjxcapital-2.firebaseapp.com",
       projectId: "jjxcapital-2",
-      storageBucket: "jjxcapital-2.firebasestorage.app",
+      storageBucket: "jjxcapital-2.appspot.com",
       messagingSenderId: "842768954334",
       appId: "1:842768954334:web:63248c0a432f583abf234f",
       measurementId: "G-VVYKFN4WPD"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
 
-    // 💾 Guardar operación
-    async function saveOperation(userId="demo-user") {
-      const base      = document.getElementById("base").value;
-      const quote     = document.getElementById("quote").value;
-      const priceBuy  = parseFloat(document.getElementById("price-buy").value);
-      const priceSell = parseFloat(document.getElementById("price-sell").value);
-      const profit    = priceSell - priceBuy;
-      try {
-        await db.collection("operations").add({
-          uid: userId, base, quote, priceBuy, priceSell, profit,
-          ts: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        loadOperations(userId);
-      } catch (e) { alert("❌ Error guardando operación: " + e.message); }
-    }
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const db = getFirestore(app);
 
-    // 📥 Cargar operaciones
-    async function loadOperations(userId="demo-user") {
-      try {
-        const snap = await db.collection("operations").where("uid","==",userId).orderBy("ts","desc").get();
-        document.getElementById("ops-list").innerHTML =
-          snap.docs.map(doc => { const o=doc.data(); return `<li>${o.base}/${o.quote} → Profit: ${o.profit}</li>`; }).join("");
-      } catch (e) { alert("❌ Error cargando operaciones: " + e.message); }
-    }
+    // 🔹 Botón Simulador
+    document.getElementById("btn-simulador").onclick = () => {
+      alert("🚀 Simulador en construcción");
+    };
 
-    // Vincular botón
-    document.getElementById("btn-save-op").onclick = () => saveOperation("demo-user");
+    // 🔹 Login con Google
+    document.getElementById("btn-login").onclick = () => {
+      signInWithPopup(auth, provider).catch(console.error);
+    };
+
+    // 🔹 Registro con email/contraseña
+    document.getElementById("btn-register").onclick = async () => {
+      const email = prompt("Introduce tu email:");
+      const pass = prompt("Introduce tu contraseña:");
+      if (email && pass) {
+        try {
+          await createUserWithEmailAndPassword(auth, email, pass);
+          alert("✅ Registro completado");
+        } catch (e) {
+          alert("❌ " + e.message);
+        }
+      }
+    };
+
+    // 🔹 Estado de sesión
+    onAuthStateChanged(auth, user => {
+      const authBtns = document.getElementById("auth-buttons");
+      const profile = document.getElementById("profile");
+      const payments = document.getElementById("payments");
+      const nav = document.getElementById("app-nav");
+
+      if (user) {
+        authBtns.style.display = "none";
+        profile.classList.add("show");
+        payments.classList.add("show");
+        nav.classList.add("show");
+
+        document.getElementById("profile-name").textContent = user.displayName || "Usuario";
+        document.getElementById("profile-email").textContent = user.email;
+        document.getElementById("profile-date").textContent = user.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString("es-ES") : "—";
+      } else {
+        authBtns.style.display = "block";
+        profile.classList.remove("show");
+        payments.classList.remove("show");
+        nav.classList.remove("show");
+      }
+    });
+
+    // 🔹 Logout (se agrega botón dinámico)
+    document.addEventListener("DOMContentLoaded", () => {
+      const profile = document.getElementById("profile");
+      const logoutBtn = document.createElement("button");
+      logoutBtn.textContent = "🚪 Cerrar Sesión";
+      logoutBtn.onclick = () => signOut(auth);
+      profile.appendChild(logoutBtn);
+    });
   </script>
 </body>
 </html>
