@@ -537,14 +537,14 @@
            } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyC2ehh6VGue2Rme9wvB1LspxNiTVqEAXpk",
-      authDomain: "jjxcapital-bf5a6.firebaseapp.com",
-      projectId: "jjxcapital-bf5a6",
-      storageBucket: "jjxcapital-bf5a6.firebasestorage.app",
-      messagingSenderId: "338896648629",
-      appId: "1:338896648629:web:2eb766cace7454099141fc",
-      measurementId: "G-XED5HH0YEF"
-    };
+  apiKey: "AIzaSyC2ehh6VGue2Rme9wvB1LspxNiTVqEAXpk",
+  authDomain: "jjxcapital-bf5a6.firebaseapp.com",
+  projectId: "jjxcapital-bf5a6",
+  storageBucket: "jjxcapital-bf5a6.appspot.com", // ✅ corregido
+  messagingSenderId: "338896648629",
+  appId: "1:338896648629:web:2eb766cace7454099141fc",
+  measurementId: "G-XED5HH0YEF"
+};
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -650,7 +650,7 @@
       // Load PayPal SDK dynamically
       if (!window.paypal) {
         const script = document.createElement('script');
-        script.src = 'https://www.paypal.com/sdk/js?client-id=AeB4vShGt5BZ8FP7oOiWZXFQNYqrUyGjz5t0U5CJqV_Kx5XcIpEZJbQR0WKG7Uh5q-HmYPm1gVwPm&currency=USD';
+        script.src = 'https://www.paypal.com/sdk/js?client-id=ATAkHJm9vroy2A5kxifCvYQbP2-XJi2OA536143hgUpb_Q_e7VrZoOEDFjKOOJQQF4dvv3JYYe2bAaF1=USD';
         script.onload = renderPayPalButton;
         document.head.appendChild(script);
       } else {
@@ -693,14 +693,15 @@
     }
 
     // Navigation clicks
-    document.getElementById('app-nav').addEventListener('click', (e) => {
-      e.preventDefault();
-      const href = e.target.closest('a')?.getAttribute('href');
-      if (href) {
-        showMessage(`Navegando a ${href.replace('#', '')}`, 'info');
-        console.log('Navegando a:', href);
-      }
-    });
+   document.getElementById('app-nav').addEventListener('click', (e) => {
+  const href = e.target.closest('a')?.getAttribute('href');
+  if (href) {
+    showMessage(`Navegando a ${href.replace('#', '')}`, 'info');
+    console.log('Navegando a:', href);
+    // Si quieres que funcione el scroll natural, quita esta línea:
+    // e.preventDefault();
+  }
+});
 
     // Add logout functionality (optional)
     window.logoutUser = () => {
