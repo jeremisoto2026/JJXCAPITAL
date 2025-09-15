@@ -1,199 +1,219 @@
-import React, { useEffect, useState } from "react";
-import "./App.css";
-import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  User
-} from "firebase/auth";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  query,
-  where,
-  orderBy,
-  getDocs,
-  serverTimestamp
-} from "firebase/firestore";
+import React, { useEffect, useState } from 'react'
+import { auth, provider, db } from './firebase'
+import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth'
+import { collection, addDoc, query, orderBy, onSnapshot, Timestamp } from 'firebase/firestore'
+import { Line } from 'react-chartjs-2'
+import 'chart.js/auto'
 
-/* ----------------------------
-   Tu firebaseConfig (tal como lo proporcionaste)
-   ---------------------------- */
-const firebaseConfig = {
-  apiKey: "AIzaSyBMHC2YuUO3mwHQORDDGZaQ84-k4tmJGjY",
-  authDomain: "jjxcapital-2.firebaseapp.com",
-  projectId: "jjxcapital-2",
-  storageBucket: "jjxcapital-2.appspot.com",
-  messagingSenderId: "842768954334",
-  appId: "1:842768954334:web:63248c0a432f583abf234f",
-  measurementId: "G-VVYKFN4WPD"
-};
-
-/* Inicializa Firebase */
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-const db = getFirestore(app);
-
-/* Tipos simples */
 type Op = {
-  base: string;
-  quote: string;
-  priceBuy: number;
-  priceSell: number;
-  profit: number;
-  ts?: any;
-};
+  id?: string
+  date: string
+  exchange: string
+  coin: string
+  amount: number
+  profit: number
+  note?: string
+  createdAt?: any
+  uid?: string
+}
 
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const [ops, setOps] = useState<Op[]>([]);
-  const [form, setForm] = useState({ base: "", quote: "", priceBuy: "", priceSell: "" });
+  const [user, setUser] = useState<User | null>(null)
+  const [ops, setOps] = useState<Op[]>([])
+  const [form, setForm] = useState({ date: '', exchange: 'Binance', coin: 'USDT', amount: '', profit: '', note: '' })
+  const [loadingPayPal, setLoadingPayPal] = useState(false)
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      if (u) loadOperations(u.uid);
-    });
-    return () => unsub();
-  }, []);
+      setUser(u)
+    })
+    return () => unsub()
+  }, [])
 
-  // Login Google
-  async function loginGoogle() {
+  // load ops from Firestore when authenticated
+  useEffect(() => {
+    if (!user) {
+      setOps([]) // reset local ops if you wish
+      return
+    }
+    const q = query(collection(db, 'operations'), orderBy('createdAt', 'desc'))
+    const unsub = onSnapshot(q, (snapshot) => {
+      setOps(snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) })))
+    })
+    return () => unsub()
+  }, [user])
+
+  // local add (and push to firestore if user)
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault()
+    const op: Op = {
+      date: form.date || new Date().toISOString().slice(0, 10),
+      exchange: form.exchange,
+      coin: form.coin,
+      amount: Number(form.amount || 0),
+      profit: Number(form.profit || 0),
+      note: form.note,
+      createdAt: Timestamp.now(),
+      uid: user?.uid
+    }
+    if (user) {
+      await addDoc(collection(db, 'operations'), op)
+    } else {
+      setOps(prev => [op, ...prev])
+    }
+    setForm({ date: '', exchange: 'Binance', coin: 'USDT', amount: '', profit: '', note: '' })
+  }
+
+  const login = async () => {
+    await signInWithPopup(auth, provider)
+  }
+  const logout = async () => {
+    await signOut(auth)
+  }
+
+  const totalProfit = ops.reduce((s, o) => s + Number(o.profit || 0), 0)
+
+  // Chart data
+  const chartData = {
+    labels: ops.slice().reverse().map(o => o.date),
+    datasets: [
+      {
+        label: 'Profit',
+        data: ops.slice().reverse().map(o => Number(o.profit)),
+        tension: 0.3,
+        fill: false
+      }
+    ]
+  }
+
+  // PayPal buttons render helper
+  useEffect(() => {
+    const clientId = import.meta.env.VITE_PAYPAL_CLIENT_ID
+    if (!clientId) return
+    if ((window as any).paypal) {
+      renderButtons()
+      return
+    }
+    setLoadingPayPal(true)
+    const script = document.createElement('script')
+    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=USD`
+    script.onload = () => {
+      setLoadingPayPal(false)
+      renderButtons()
+    }
+    document.body.appendChild(script)
+  }, [user])
+
+  function renderButtons() {
     try {
-      await signInWithPopup(auth, provider);
+      ;(window as any).paypal.Buttons({
+        createOrder: (data: any, actions: any) => actions.order.create({
+          purchase_units: [{ amount: { value: '15.00' } }],
+          application_context: { shipping_preference: 'NO_SHIPPING' }
+        }),
+        onApprove: (data: any, actions: any) => actions.order.capture().then((details: any) => {
+          alert('Pago completado: ' + details.payer.name.given_name)
+        })
+      }).render('#paypal-button-container')
     } catch (e) {
-      console.error("login error", e);
-      alert("Error iniciando sesión: " + (e as any).message);
+      console.error('PayPal render error', e)
     }
   }
 
-  // Register email/password
-  async function registerEmail() {
-    const email = prompt("Introduce tu email:");
-    const pass = prompt("Introduce contraseña:");
-    if (!email || !pass) return alert("Email y contraseña requeridos");
-    try {
-      await createUserWithEmailAndPassword(auth, email, pass);
-      alert("Registro correcto. Ya puedes iniciar sesión.");
-    } catch (e) {
-      console.error(e);
-      alert("Error registro: " + (e as any).message);
-    }
-  }
+  // Binance & Blockchain pay links (your values)
+  const BINANCE_LINK = 'https://pay.binance.com/en?merchantId=807678814'
+  const BLOCKCHAIN_LINK = 'https://commerce.blockchain.com/payment-request/create?address=0x4c64b783f1babc0a2fe62f174873f415393c2269&asset=USDTBEP20'
 
-  // Logout
-  async function logout() {
-    await signOut(auth);
-  }
-
-  // Guardar operación (desde inputs)
-  async function saveOperation() {
-    if (!user) return alert("Inicia sesión para guardar operaciones");
-    const base = form.base.trim();
-    const quote = form.quote.trim();
-    const priceBuy = parseFloat(form.priceBuy || "0");
-    const priceSell = parseFloat(form.priceSell || "0");
-    const profit = priceSell - priceBuy;
-    if (!base || !quote) return alert("Base y Quote obligatorios");
-    try {
-      await addDoc(collection(db, "operations"), {
-        uid: user.uid,
-        base,
-        quote,
-        priceBuy,
-        priceSell,
-        profit,
-        ts: serverTimestamp()
-      });
-      setForm({ base: "", quote: "", priceBuy: "", priceSell: "" });
-      loadOperations(user.uid);
-    } catch (e) {
-      console.error(e);
-      alert("Error guardando operación: " + (e as any).message);
-    }
-  }
-
-  async function loadOperations(uid: string) {
-    try {
-      const q = query(collection(db, "operations"), where("uid", "==", uid), orderBy("ts", "desc"));
-      const snap = await getDocs(q);
-      const list: Op[] = snap.docs.map((d) => d.data() as Op);
-      setOps(list);
-    } catch (e) {
-      console.error("load ops", e);
-      alert("Error cargando operaciones: " + (e as any).message);
-    }
-  }
+  // WhatsApp/Telegram direct: if you want to hide number use serverless redirect (explained abajo)
+  const TELEGRAM_LINK = 'https://t.me/your_username'
+  // If you cannot hide, use 'wa.me' with number OR use serverless redirect
+  const WA_REDIRECT = '/.netlify/functions/wa' // example if you deploy on Netlify (see abajo)
 
   return (
-    <div>
-      {/* HERO */}
-      <section id="hero">
-        <div className="logo">JJXCAPITAL ⚡</div>
-        <p className="tagline">Seguridad, velocidad y confianza</p>
-        <button id="btn-simulador" onClick={() => alert("Simulador (pendiente)")} >
-          🔄 Ir al Simulador
-        </button>
+    <div style={{ paddingBottom: 100 }}>
+      <header id="hero">
+        <h1>JJXCAPITAL ⚡ Arbitraje P2P Manager</h1>
+        <p>Registro y control de operaciones P2P</p>
 
-        {!user ? (
-          <div id="auth-buttons">
-            <button id="btn-login" onClick={loginGoogle}>🚀 Iniciar Sesión con Google</button>
-            <button id="btn-register" onClick={registerEmail}>📝 Regístrate Gratis</button>
-          </div>
-        ) : null}
-      </section>
+        <button id="btn-simulador">Simulador</button>
 
-      {/* PROFILE */}
-      <section id="profile" className={user ? "show" : ""} style={{ display: user ? "block" : "none" }}>
-        <h2>👤 Mi Perfil</h2>
-        <p>Nombre: <span id="profile-name">{user?.displayName ?? "—"}</span></p>
-        <p>Email: <span id="profile-email">{user?.email ?? "—"}</span></p>
-        <p>Miembro desde: <span id="profile-date">{user?.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : "—"}</span></p>
-        <p>Estado: <span id="profile-status">Plan Gratuito</span></p>
-        <button onClick={logout}>🚪 Cerrar Sesión</button>
-      </section>
-
-      {/* PAYMENTS */}
-      <section id="payments" className={user ? "show" : ""} style={{ display: user ? "block" : "none" }}>
-        <h2>💎 Plan PREMIUM - $15 USD/mes</h2>
-        <div className="payment-methods">
-          <div className="payment-method">
-            <h4>💳 PayPal</h4>
-            <div id="paypal-button-container">(PayPal)</div>
-          </div>
+        <div id="auth-buttons" style={{ display: user ? 'none' : 'inline-block' }}>
+          <button id="btn-login" onClick={login}>Iniciar Sesión (Google)</button>
+          <button id="btn-register" onClick={login}>Registrarse</button>
         </div>
-      </section>
 
-      {/* DASHBOARD / OPERATIONS */}
-      <section id="dashboard" style={{ display: user ? "block" : "none" }}>
-        <h2>📊 Mis Operaciones</h2>
-        <div style={{ marginBottom: 12 }}>
-          <input id="base" placeholder="Base (BTC)" value={form.base} onChange={(e) => setForm({...form, base: e.target.value})} />
-          <input id="quote" placeholder="Quote (USDT)" value={form.quote} onChange={(e) => setForm({...form, quote: e.target.value})} />
-          <input id="price-buy" type="number" step="0.01" placeholder="Precio Compra" value={form.priceBuy} onChange={(e) => setForm({...form, priceBuy: e.target.value})} />
-          <input id="price-sell" type="number" step="0.01" placeholder="Precio Venta" value={form.priceSell} onChange={(e) => setForm({...form, priceSell: e.target.value})} />
-          <button id="btn-save-op" onClick={saveOperation}>💾 Guardar</button>
+        <div style={{ display: user ? 'block' : 'none', marginTop: 12 }}>
+          <button onClick={logout}>Cerrar sesión</button>
         </div>
-        <ul id="ops-list">
-          {ops.map((o, i) => (
-            <li key={i}>{o.base}/{o.quote} → Profit: {o.profit}</li>
-          ))}
-        </ul>
-      </section>
+      </header>
 
-      <nav id="app-nav" className={user ? "show" : ""} style={{ display: user ? "flex" : "none" }}>
-        <a href="#dashboard">🏠 <span className="nav-label">Dashboard</span></a>
-        <a href="#arbitraje">⚡ <span className="nav-label">Arbitraje</span></a>
-        <a href="#historial">📜 <span className="nav-label">Historial</span></a>
-        <a href="#p2p">🤝 <span className="nav-label">P2P</span></a>
-        <a href="#premium">💎 <span className="nav-label">Premium</span></a>
+      <nav id="app-nav" style={{ display: user ? 'flex' : 'none' }}>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#arbitraje">Arbitraje</a>
+        <a href="#historial">Historial</a>
+        <a href="#p2p">P2P</a>
+        <a href="#premium">Premium</a>
       </nav>
-    </div>
-  );
-}
+
+      <main style={{ padding: 20 }}>
+        <section id="profile" style={{ display: user ? 'block' : 'none' }}>
+          <h3>Mi Perfil</h3>
+          <p><strong>Usuario:</strong> {user?.displayName}</p>
+          <p><strong>Email:</strong> {user?.email}</p>
+        </section>
+
+        <section id="form" style={{ marginTop: 20 }}>
+          <h3>Registrar Operación</h3>
+          <form onSubmit={handleAdd}>
+            <input value={form.date} onChange={e => setForm({...form, date: e.target.value})} type="date" />
+            <input placeholder="Exchange" value={form.exchange} onChange={e => setForm({...form, exchange: e.target.value})} />
+            <input placeholder="Coin" value={form.coin} onChange={e => setForm({...form, coin: e.target.value})} />
+            <input placeholder="Amount" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} />
+            <input placeholder="Profit" value={form.profit} onChange={e => setForm({...form, profit: e.target.value})} />
+            <input placeholder="Nota" value={form.note} onChange={e => setForm({...form, note: e.target.value})} />
+            <button type="submit">Agregar</button>
+          </form>
+        </section>
+
+        <section id="dashboard" style={{ marginTop: 20 }}>
+          <h3>Dashboard</h3>
+          <p>Total Profit: <strong>{totalProfit.toFixed(2)}</strong></p>
+          <div style={{ maxWidth: 800 }}>
+            <Line data={chartData} />
+          </div>
+        </section>
+
+        <section id="historial" style={{ marginTop: 20 }}>
+          <h3>Historial</h3>
+          <table>
+            <thead><tr><th>Fecha</th><th>Exchange</th><th>Coin</th><th>Monto</th><th>Profit</th></tr></thead>
+            <tbody>
+              {ops.map((o, i) => (
+                <tr key={i}>
+                  <td>{o.date}</td>
+                  <td>{o.exchange}</td>
+                  <td>{o.coin}</td>
+                  <td>{o.amount}</td>
+                  <td>{o.profit}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        <section id="payments" style={{ display: user ? 'block' : 'none', marginTop: 20 }}>
+          <h3>Pagos</h3>
+
+          <div id="paypal-button-container">{loadingPayPal && <p>Cargando PayPal...</p>}</div>
+
+          <p style={{ marginTop: 12 }}>
+            <a className="btn btn-warning" href={BINANCE_LINK} target="_blank">BINANCE PAY</a>
+            <a className="btn btn-dark" href={BLOCKCHAIN_LINK} target="_blank">BLOCKCHAIN PAY</a>
+          </p>
+        </section>
+
+        <section id="premium" style={{ display: user ? 'block' : 'none', marginTop: 20 }}>
+          <h3>Premium - Contacto</h3>
+          <p>
+            <a className="btn btn-success" href={WA_REDIRECT} target="_blank" rel="noreferrer">WhatsApp</a>
+            <a className="btn btn-info" href={TELEGRAM_LINK} target="_blank" rel="
