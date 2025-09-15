@@ -2,19 +2,17 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import { useAuth } from "./hooks/useAuth";
-import { saveOperation, loadOperations } from "./db";
+import { saveOperation, loadOperations, Operation } from "./db";
 
 export default function App() {
   const { user, loading, loginWithGoogle, registerWithEmail, logout } = useAuth();
 
-  // Form state (mantén IDs si tu CSS los usa)
   const [base, setBase] = useState("");
   const [quote, setQuote] = useState("");
   const [priceBuy, setPriceBuy] = useState("");
   const [priceSell, setPriceSell] = useState("");
-  const [ops, setOps] = useState<any[]>([]);
+  const [ops, setOps] = useState<Operation[]>([]);
 
-  // Al cambiar de usuario, carga operaciones
   useEffect(() => {
     async function fetchOps() {
       if (!user) { setOps([]); return; }
@@ -32,7 +30,6 @@ export default function App() {
       await saveOperation(user.uid, base, quote, pb, ps);
       const list = await loadOperations(user.uid);
       setOps(list);
-      // limpiar formulario
       setBase(""); setQuote(""); setPriceBuy(""); setPriceSell("");
     } catch (e: any) {
       alert("Error guardando operación: " + e.message);
@@ -41,7 +38,7 @@ export default function App() {
 
   return (
     <div>
-      {/* === HERO (mantén tu diseño tal cual) */}
+      {/* HERO */}
       <section id="hero">
         <div className="logo">JJXCAPITAL ⚡</div>
         <p className="tagline">Seguridad, velocidad y confianza</p>
@@ -51,12 +48,16 @@ export default function App() {
         {!user && (
           <div id="auth-buttons">
             <button id="btn-login" onClick={loginWithGoogle}>🚀 Iniciar Sesión con Google</button>
-            <button id="btn-register" onClick={() => registerWithEmail(prompt("Email") || "", prompt("Contraseña") || "")}>📝 Regístrate Gratis</button>
+            <button id="btn-register" onClick={() => {
+              const email = prompt("Email") || "";
+              const pass = prompt("Contraseña") || "";
+              if (email && pass) registerWithEmail(email, pass);
+            }}>📝 Regístrate Gratis</button>
           </div>
         )}
       </section>
 
-      {/* PERFIL */}
+      {/* PROFILE */}
       <section id="profile" style={{ display: user ? "block" : "none" }}>
         <h2>👤 Mi Perfil</h2>
         <p>Nombre: <span id="profile-name">{user?.displayName ?? "—"}</span></p>
@@ -64,13 +65,13 @@ export default function App() {
         <button onClick={() => logout()}>🚪 Cerrar Sesión</button>
       </section>
 
-      {/* PAGOS */}
+      {/* PAYMENTS */}
       <section id="payments" style={{ display: user ? "block" : "none" }}>
         <h2>💎 Plan PREMIUM - $15 USD/mes</h2>
         <div id="paypal-button-container"></div>
       </section>
 
-      {/* DASHBOARD / FORM operaciones */}
+      {/* DASHBOARD / FORM */}
       <section id="dashboard" style={{ display: user ? "block" : "none", padding: 20 }}>
         <h3>Registrar Operación</h3>
         <input id="base" value={base} onChange={e => setBase(e.target.value)} placeholder="Base (BTC)" />
@@ -82,7 +83,7 @@ export default function App() {
         <h4>Mis Operaciones</h4>
         <ul id="ops-list">
           {ops.map((o, i) => (
-            <li key={i}>{o.base}/{o.quote} → Profit: {o.profit}</li>
+            <li key={o.id ?? i}>{o.base}/{o.quote} → Profit: {o.profit}</li>
           ))}
         </ul>
       </section>
