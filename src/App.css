@@ -1,0 +1,31 @@
+/* Copia aquí tu CSS completo si quieres mantener exactamente tu diseño.
+   Si prefieres usar el CSS que te pasé antes, pega esto: */
+
+:root { --gold: #FFD700; --bg: #080808; --card: #1a1a1a; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg,#0D0D0D,#1a1a1a);
+  color: #fff;
+}
+
+#hero { padding: 60px 20px; min-height: 100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.logo { font-size: 3.5rem; color: var(--gold); margin-bottom: 20px; }
+.tagline { color: #ccc; margin-bottom: 30px; }
+
+button { cursor: pointer; border-radius: 20px; padding: 12px 20px; border: none; font-weight: 700; }
+
+#btn-simulador { background: linear-gradient(135deg,#333,#555); color: #fff; border: 2px solid var(--gold); }
+#btn-login, #btn-register { background: linear-gradient(135deg,var(--gold),#ffa500); color: #000; }
+
+#app-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:#111; padding:12px; }
+#app-nav.show { display:flex; justify-content:space-around; }
+
+#profile, #payments { display:none; padding:20px; margin:20px; border-radius:12px; }
+
+/* Dashboard inputs */
+#dashboard input { margin:6px; padding:10px; border-radius:8px; border:1px solid #333; background:#0b0b0b; color:#fff; }
+#dashboard { display:none; padding:20px; }
+#ops-list { list-style:none; padding:0; max-width:400px; margin:10px auto; text-align:left; }
+#ops-list li { padding:8px 10px; border-bottom:1px solid #222; }
