@@ -1,22 +1,28 @@
 // src/db.ts
-import { db } from "./firebase";
-import { collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "firebase/firestore";
+import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "firebase/firestore";
+import { app } from "./firebase";
+
+const db = getFirestore(app);
 
 export async function saveOperation(uid: string, base: string, quote: string, priceBuy: number, priceSell: number) {
   const profit = priceSell - priceBuy;
-  return addDoc(collection(db, "operations"), {
+  await addDoc(collection(db, "operations"), {
     uid,
     base,
     quote,
     priceBuy,
     priceSell,
     profit,
-    ts: serverTimestamp()
+    ts: serverTimestamp(),
   });
 }
 
 export async function loadOperations(uid: string) {
-  const q = query(collection(db, "operations"), where("uid", "==", uid), orderBy("ts", "desc"));
+  const q = query(
+    collection(db, "operations"),
+    where("uid", "==", uid),
+    orderBy("ts", "desc")
+  );
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
